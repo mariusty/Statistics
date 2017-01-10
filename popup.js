@@ -1,6 +1,6 @@
 var bg = chrome.extension.getBackgroundPage();
 
-google.load('visualization', '1.0', {'packages':['table']});
+google.load('visualization', '1.0', {'packages':['corechart', 'table']});
   google.setOnLoadCallback(function () {
     if (bg.mode === bg.TYPE.today) 
       show(bg.TYPE.today);
@@ -10,6 +10,12 @@ google.load('visualization', '1.0', {'packages':['table']});
       show(bg.TYPE.all);
   });
 
+
+function openBL() {
+  chrome.tabs.create({
+    url: 'blacklist.html'
+  });
+}
 
 function timeString(numSeconds) {
   if (numSeconds === 0) 
@@ -101,6 +107,7 @@ function displayData(type) {
     }]);
   }
 
+  drawChart(limited_data);
 
   var total = JSON.parse(localStorage["total"]);
   var numSeconds = 0;
@@ -137,6 +144,26 @@ function show(mode) {
   document.getElementById(mode).className = 'active';
 }
 
+function drawChart(chart_data) {
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Domain');
+  data.addColumn('number', 'Time');
+  data.addRows(chart_data);
+
+  var options = {
+    tooltip: {
+      text: 'percentage'
+    },
+    chartArea: {
+      width: 400,
+      height: 180
+    }
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+  chart.draw(data, options);
+}
+
 function drawTable(table_data, type) {
   var data = new google.visualization.DataTable();
   data.addColumn('string', 'Site');
@@ -164,4 +191,5 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#today').addEventListener('click', function() { show(bg.TYPE.today); });
   document.querySelector('#average').addEventListener('click', function() { show(bg.TYPE.average); });
   document.querySelector('#all').addEventListener('click', function() { show(bg.TYPE.all); });
+document.querySelector('#blacklist').addEventListener('click', openBL);
 });

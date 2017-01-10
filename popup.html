@@ -3,7 +3,7 @@
   <head>
     <style type="text/css">
       body {
-          width: 400px;
+          width: 600px;
           font-family: helvetica, arial, sans-serif;
           font-size: 13px;
       }
@@ -16,6 +16,11 @@
       }
       a:focus {
           outline: none;
+      }
+      #blacklist {
+          float: left;
+          margin-top: -1px;
+          font-size: 12px;
       }
       #form a {
           font-weight: bold;
@@ -53,10 +58,14 @@
       <a id="average" href="#">Average</a>
       <a id="all" href="#">All Time</a>
     </div>
+    <div id="blacklist">
+      <a id="blacklist" href="#">Blacklist</a>
+    </div>
     <div style="clear:both"></div>
     <div id="data">
       <span id="nodata">Start browsing to collect usage data.</span>
-      <div id="table_div"></div>
+      <div id="chart_div" style="float:left; width: 300px;"></div>
+      <div id="table_div" style="float:right; width: 300px;"></div>
     </div>
   </body>
 </html>

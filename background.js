@@ -8,8 +8,10 @@ var TYPE = {
 var mode = TYPE.today;
 
 setDefaults();
-// Set default settings
+
 function setDefaults() {
+  if (!localStorage["blacklist"]) 
+    localStorage["blacklist"] = JSON.stringify(["example.com"]);
   
   if (!localStorage["num_days"]) 
     localStorage["num_days"] = 1;
@@ -89,6 +91,17 @@ function extractDomain(url) {
   return url.match(re)[2];
 }
 
+function inBlacklist(url) {
+  if (!url.match(/^http/)) 
+    return true;
+  var blacklist = JSON.parse(localStorage["blacklist"]);
+  for (var i = 0; i < blacklist.length; i++) {
+    if (url.match(blacklist[i])) 
+      return true;
+  }
+  return false;
+}
+
 
 function updateData() {
   chrome.idle.queryState(30, function (state) {
@@ -98,7 +111,7 @@ function updateData() {
           return;
         var tab = tabs[0];
         checkDate();
-
+        if (!inBlacklist(tab.url)) {
           var domain = extractDomain(tab.url);
           var domains = JSON.parse(localStorage["domains"]);
           if (!(domain in domains)) {
@@ -127,6 +140,11 @@ function updateData() {
           chrome.browserAction.setBadgeText({
             text: num_min
           });
+        } else {
+          chrome.browserAction.setBadgeText({
+            text: ""
+          });
+        }
       });
     }
   });
